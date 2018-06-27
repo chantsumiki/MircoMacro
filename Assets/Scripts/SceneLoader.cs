@@ -5,6 +5,13 @@ using UnityEngine.SceneManagement;
 public class SceneLoader : MonoBehaviour
 {
 
+    public Object _env, _UI, _mainScene, _mainSystem;
+    public Object[] _subScene;
+    public Object[] _subSystem;
+
+
+    private string Env, UI, MainScene, MainSystem;
+
 
     public static SceneLoader _instance;
 
@@ -14,13 +21,13 @@ public class SceneLoader : MonoBehaviour
         if (_instance == null)
         {
             _instance = this;
+            return;
         }
-        else if (_instance != null)
-        {
-            Destroy(this.gameObject);
-        }
+        Destroy(this.gameObject);
+
 
     }
+
 
     public static SceneLoader GetInstance()
     {
@@ -38,9 +45,16 @@ public class SceneLoader : MonoBehaviour
     void Start()
     {
 
+        Env = _env.name.ToString();
+        UI = _UI.name.ToString();
+        MainScene = _mainSystem.name.ToString();
+        MainSystem = _mainSystem.name.ToString();
+
+
 #if !UNITY_EDITOR
-        SceneManager.LoadScene(1,LoadSceneMode.Additive);
-        SceneManager.LoadScene(2,LoadSceneMode.Additive);
+        SceneManager.LoadScene(UI,LoadSceneMode.Additive);
+        SceneManager.LoadScene(MainScene,LoadSceneMode.Additive);
+        SceneManager.LoadScene(MainSystem,LoadSceneMode.Additive);
 #endif
     }
 
@@ -60,29 +74,9 @@ public class SceneLoader : MonoBehaviour
 
     IEnumerator Reload()
     {
-        if (_BackToTitle == true)
-        {
-            _FirstRun = false;
-        }
-
-        SceneManager.UnloadSceneAsync(2);
+        SceneManager.UnloadSceneAsync(MainSystem);
         yield return new WaitForEndOfFrame();
-        SceneManager.LoadScene(2, LoadSceneMode.Additive);
-        yield return new WaitForEndOfFrame();
-
-        if (_Retry == true)
-        {
-            _ShowMenu = false;
-            MenuChecker._instance.MenuCheck();
-            SceneSelecter._instance.PlayLastScene();
-            _Retry = false;
-            yield break;
-        }
-        else if (_Retry == false)
-        {
-            _ShowMenu = true;
-            MenuChecker._instance.MenuCheck();
-        }
+        SceneManager.LoadScene(MainSystem, LoadSceneMode.Additive);
         yield break;
 
     }
